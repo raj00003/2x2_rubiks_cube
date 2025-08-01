@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2x2 Rubik's Cube</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+         <title>2x2 Rubik's Cube</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -113,6 +114,8 @@
             bottom: 0;
             background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.1), transparent);
             animation: shimmer 4s ease-in-out infinite;
+            pointer-events: none; /* Don't interfere with mouse events */
+            z-index: 1;
         }
         
         @keyframes shimmer {
@@ -129,6 +132,8 @@
             touch-action: none; /* Prevent default touch behaviors */
             pointer-events: auto; /* Ensure mouse events work */
             user-select: none; /* Prevent text selection */
+            position: relative;
+            z-index: 10;
         }
         
         #cube-container canvas:active {
@@ -288,31 +293,118 @@
             transform: translateX(3px);
         }
         
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container-fluid {
-                padding: 10px;
-            }
-            
-            #cube-container {
-                height: 40vh;
-            }
-            
-            .control-panel, .how-to-play {
-                padding: 15px;
-            }
-            
-            .btn-cube {
-                padding: 10px 15px;
-                font-size: 0.9em;
-            }
-            
-            .compact-list {
-                grid-template-columns: 1fr;
-                gap: 2px;
-                font-size: 0.8em;
-            }
-        }
+                 /* Stylish Title Styling */
+         .cube-title {
+             position: relative;
+             text-align: center;
+             margin-top: 20px;
+             padding: 20px;
+             background: linear-gradient(135deg, 
+                 rgba(0, 212, 255, 0.1) 0%, 
+                 rgba(156, 39, 176, 0.1) 50%, 
+                 rgba(255, 64, 129, 0.1) 100%);
+             border-radius: 15px;
+             border: 2px solid rgba(0, 212, 255, 0.3);
+             backdrop-filter: blur(10px);
+             box-shadow: 
+                 0 8px 32px rgba(0, 0, 0, 0.3),
+                 inset 0 0 20px rgba(0, 212, 255, 0.05);
+             overflow: hidden;
+         }
+         
+         .title-text {
+             font-family: 'Orbitron', 'Arial', sans-serif;
+             font-size: 2.5em;
+             font-weight: 700;
+             background: linear-gradient(45deg, 
+                 #00d4ff 0%, 
+                 #9c27b0 25%, 
+                 #ff4081 50%, 
+                 #00d4ff 75%, 
+                 #9c27b0 100%);
+             background-size: 300% 300%;
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+             background-clip: text;
+             text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+             margin: 0;
+             padding: 10px;
+             letter-spacing: 3px;
+             animation: titleGlow 4s ease-in-out infinite;
+             position: relative;
+             z-index: 2;
+         }
+         
+         .title-glow {
+             position: absolute;
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             background: radial-gradient(circle at center, 
+                 rgba(0, 212, 255, 0.2) 0%, 
+                 transparent 70%);
+             animation: glowPulse 3s ease-in-out infinite;
+             z-index: 1;
+         }
+         
+         @keyframes titleGlow {
+             0%, 100% { 
+                 background-position: 0% 50%;
+                 filter: brightness(1);
+             }
+             50% { 
+                 background-position: 100% 50%;
+                 filter: brightness(1.3);
+             }
+         }
+         
+         @keyframes glowPulse {
+             0%, 100% { 
+                 opacity: 0.3;
+                 transform: scale(1);
+             }
+             50% { 
+                 opacity: 0.6;
+                 transform: scale(1.05);
+             }
+         }
+         
+         /* Responsive design */
+         @media (max-width: 768px) {
+             .container-fluid {
+                 padding: 10px;
+             }
+             
+             #cube-container {
+                 height: 40vh;
+             }
+             
+             .control-panel, .how-to-play {
+                 padding: 15px;
+             }
+             
+             .btn-cube {
+                 padding: 10px 15px;
+                 font-size: 0.9em;
+             }
+             
+             .compact-list {
+                 grid-template-columns: 1fr;
+                 gap: 2px;
+                 font-size: 0.8em;
+             }
+             
+             .title-text {
+                 font-size: 1.8em;
+                 letter-spacing: 2px;
+             }
+             
+             .cube-title {
+                 margin-top: 15px;
+                 padding: 15px;
+             }
+         }
     </style>
 </head>
 <body>
@@ -321,15 +413,21 @@
     
     <div class="container-fluid">
         <div class="row">
-            <!-- Main Cube Area -->
-            <div class="col-md-6">
-                <div id="cube-container"></div>
-            </div>
+                         <!-- Main Cube Area -->
+             <div class="col-md-6">
+                 <div id="cube-container"></div>
+                 
+                 <!-- Stylish Title -->
+                 <div class="cube-title">
+                     <h1 class="title-text">CubeNav: Mission Aerospace</h1>
+                     <div class="title-glow"></div>
+                 </div>
+             </div>
             
             <!-- Control Panel -->
             <div class="col-md-6">
-                <div class="control-panel">
-                    <h5>🚀 2x2 Rubik's Cube</h5>
+                                 <div class="control-panel">
+                     <h5>🚀 Cube Controls</h5>
                     
                     <div class="controls-section">
                         <strong>🎮 Controls:</strong>
@@ -337,6 +435,8 @@
                         <button class="btn-cube" onclick="resetCube()">🔄 Reset</button>
                         <button class="btn-cube" onclick="autoSolve()">🤖 Auto-Solve</button>
                         <button class="btn-cube" onclick="toggleReverse()">🔄 Toggle Reverse</button>
+                                                 <button class="btn-cube" onclick="resetCameraView()">📷 Reset View</button>
+                         <button class="btn-cube" onclick="resetCubeRotation()">🔄 Reset Cube</button>
                     </div>
                     
                     <div class="controls-section">
@@ -365,6 +465,9 @@
                         <li>2 - Reverse direction</li>
                         <li>T - Toggle reverse mode</li>
                         <li>Ctrl+Z - Undo last move</li>
+                                                 <li>🖱️ Drag - Rotate entire cube</li>
+                         <li>🖱️ Scroll - Zoom in/out</li>
+                         <li>🔄 Reset Cube - Reset cube rotation</li>
                     </ul>
                 </div>
             </div>

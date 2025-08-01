@@ -15,6 +15,11 @@ let face_animation_status = {
     R: false, L: false, U: false, D: false, F: false, B: false
 };
 
+// Mouse drag variables for cube rotation
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+let cubeGroup; // Master group containing all cubelets
+
 // Cube colors
 const COLORS = {
     WHITE: 0xFFFFFF,
@@ -50,7 +55,7 @@ function initScene() {
     console.log('Container found:', container);
     
     camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(3, 3, 3); // Optimal viewing angle for 2x2 cube
+    camera.position.set(2.5, 2.5, 2.5); // Closer position for bigger cube appearance
     camera.lookAt(0, 0, 0); // Look at the center of the cube
     console.log('Camera created at position:', camera.position);
     
@@ -67,13 +72,14 @@ function initScene() {
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true; // for smoother motion
         controls.dampingFactor = 0.05; // smoother damping
-        controls.rotateSpeed = 0.6;
+        controls.rotateSpeed = 1.0; // increased for better responsiveness
         controls.enableZoom = true;
         controls.enablePan = false; // keep cube centered
-        controls.minDistance = 2; // prevent getting too close
-        controls.maxDistance = 8; // prevent getting too far
+        controls.minDistance = 2; // allow getting closer for bigger view
+        controls.maxDistance = 8; // limit maximum distance
         controls.autoRotate = false; // no auto-rotation
         controls.enableKeys = false; // disable keyboard controls
+        controls.target.set(0, 0, 0); // ensure target is at cube center
         
         // Add event listeners for debugging
         controls.addEventListener('start', () => console.log('🔍 OrbitControls: Mouse interaction started'));
@@ -84,6 +90,7 @@ function initScene() {
         console.log('🔍 Controls object:', controls);
         console.log('🔍 Camera position:', camera.position);
         console.log('🔍 Renderer DOM element:', renderer.domElement);
+        console.log('🔍 Controls target:', controls.target);
     } else {
         console.warn('OrbitControls not available');
         controls = null;
@@ -99,9 +106,18 @@ function initScene() {
     
     console.log('Lighting added - ambient and directional lights');
     
+    // Create the master cube group
+    cubeGroup = new THREE.Group();
+    scene.add(cubeGroup);
+    console.log('Cube group created');
+    
     // Create the 2x2 cube
     createCube();
     console.log('Cube created');
+    
+    // Setup mouse drag events for cube rotation
+    setupMouseDragEvents();
+    console.log('Mouse drag events setup complete');
     
     // Debug: Log scene children to verify cubelets are added
     console.log('Scene children count:', scene.children.length);
@@ -119,8 +135,8 @@ function initScene() {
 // Create 2x2 cube (8 cubelets)
 function createCube() {
     console.log('Creating 2x2 cube...');
-    // Use tight spacing for compact 2x2x2 block
-    const pos = [-0.55, 0.55];
+    // Use minimal spacing for tight 2x2x2 block
+    const pos = [-0.6, 0.6];
     let cubeletCount = 0;
     
     // Initialize 3D array properly with integer indices
@@ -141,7 +157,7 @@ function createCube() {
             for (let z of pos) {
                 const cubelet = createCubelet(x, y, z);
                 cubelet.position.set(x, y, z);
-                scene.add(cubelet);
+                cubeGroup.add(cubelet); // Add to cube group instead of scene
                 cubesArray3D[xIndex(x)][yIndex(y)][zIndex(z)] = cubelet;
                 cubeletCount++;
                 console.log(`Adding cubelet ${cubeletCount} at:`, x, y, z);
@@ -153,8 +169,8 @@ function createCube() {
 
 // Create individual cubelet
 function createCubelet(x, y, z) {
-    // Use 1x1x1 geometry for tight packing
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    // Use smaller geometry for tighter cubelets
+    const geometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
     const materials = [];
     
     // Define face colors based on position
@@ -179,20 +195,60 @@ function getCubeletColors(x, y, z) {
     const colors = new Array(6).fill(COLORS.BLACK);
     
     // Three.js BoxGeometry face order: right, left, top, bottom, front, back
-    // Right face (x = 0.55) - RED
-    if (x === 0.55) colors[0] = COLORS.RED;
-    // Left face (x = -0.55) - ORANGE  
-    if (x === -0.55) colors[1] = COLORS.ORANGE;
-    // Top face (y = 0.55) - WHITE
-    if (y === 0.55) colors[2] = COLORS.WHITE;
-    // Bottom face (y = -0.55) - YELLOW
-    if (y === -0.55) colors[3] = COLORS.YELLOW;
-    // Front face (z = 0.55) - GREEN
-    if (z === 0.55) colors[4] = COLORS.GREEN;
-    // Back face (z = -0.55) - BLUE
-    if (z === -0.55) colors[5] = COLORS.BLUE;
+    // Right face (x = 0.6) - RED
+    if (x === 0.6) colors[0] = COLORS.RED;
+    // Left face (x = -0.6) - ORANGE  
+    if (x === -0.6) colors[1] = COLORS.ORANGE;
+    // Top face (y = 0.6) - WHITE
+    if (y === 0.6) colors[2] = COLORS.WHITE;
+    // Bottom face (y = -0.6) - YELLOW
+    if (y === -0.6) colors[3] = COLORS.YELLOW;
+    // Front face (z = 0.6) - GREEN
+    if (z === 0.6) colors[4] = COLORS.GREEN;
+    // Back face (z = -0.6) - BLUE
+    if (z === -0.6) colors[5] = COLORS.BLUE;
     
     return colors;
+}
+
+// Setup mouse drag events for cube rotation
+function setupMouseDragEvents() {
+    const canvas = renderer.domElement;
+    
+    canvas.addEventListener('mousedown', (event) => {
+        isDragging = true;
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+        canvas.style.cursor = 'grabbing';
+        console.log('🔍 Mouse drag started');
+    });
+    
+    canvas.addEventListener('mousemove', (event) => {
+        if (!isDragging) return;
+        
+        const deltaX = event.clientX - previousMousePosition.x;
+        const deltaY = event.clientY - previousMousePosition.y;
+        
+        // Rotate the entire cube group
+        cubeGroup.rotation.y += deltaX * 0.01;
+        cubeGroup.rotation.x += deltaY * 0.01;
+        
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+        isDragging = false;
+        canvas.style.cursor = 'grab';
+        console.log('🔍 Mouse drag ended');
+    });
+    
+    canvas.addEventListener('mouseleave', () => {
+        isDragging = false;
+        canvas.style.cursor = 'grab';
+        console.log('🔍 Mouse left canvas');
+    });
+    
+    // Set initial cursor style
+    canvas.style.cursor = 'grab';
 }
 
 // Animation loop
@@ -209,19 +265,20 @@ function animate() {
         console.log('Rendering scene with', scene.children.length, 'objects');
         console.log('🔍 Controls active:', !!controls);
         console.log('🔍 Camera position:', camera.position);
+        console.log('🔍 Cube group rotation:', cubeGroup?.rotation);
     }
 }
 
 // Position mapping helper functions
-function xIndex(val) { return val === -0.55 ? 0 : 1; }
-function yIndex(val) { return val === -0.55 ? 0 : 1; }
-function zIndex(val) { return val === -0.55 ? 0 : 1; }
+function xIndex(val) { return val === -0.6 ? 0 : 1; }
+function yIndex(val) { return val === -0.6 ? 0 : 1; }
+function zIndex(val) { return val === -0.6 ? 0 : 1; }
 
 // Function to update cubelet positions in the 3D array after rotation
 function updateCubeletPositionsAfterRotation(rotatedCubelets) {
-    // Get all cubelets from the scene
+    // Get all cubelets from the cube group
     const allCubelets = [];
-    scene.traverse((child) => {
+    cubeGroup.traverse((child) => {
         if (child.isMesh && child.geometry && child.geometry.type === 'BoxGeometry') {
             allCubelets.push(child);
         }
@@ -266,7 +323,7 @@ function resetCubeObject() {
     }
     
     // Reset all cubelets to original positions
-    const pos = [-0.55, 0.55];
+    const pos = [-0.6, 0.6];
     for (let x of pos) {
         for (let y of pos) {
             for (let z of pos) {
@@ -416,18 +473,18 @@ const EPS = 0.01;
 
 // Rotation mapping for each face with axis, coordinate value, and direction
 const rotationMap = {
-    U: { axis: 'y', value: 0.55, dir: -1 },
-    D: { axis: 'y', value: -0.55, dir: 1 },
-    L: { axis: 'x', value: -0.55, dir: -1 },
-    R: { axis: 'x', value: 0.55, dir: 1 },
-    F: { axis: 'z', value: 0.55, dir: -1 },
-    B: { axis: 'z', value: -0.55, dir: 1 },
+    U: { axis: 'y', value: 0.6, dir: -1 },
+    D: { axis: 'y', value: -0.6, dir: 1 },
+    L: { axis: 'x', value: -0.6, dir: -1 },
+    R: { axis: 'x', value: 0.6, dir: 1 },
+    F: { axis: 'z', value: 0.6, dir: -1 },
+    B: { axis: 'z', value: -0.6, dir: 1 },
 };
 
-// Get all cubelets from the scene
+// Get all cubelets from the cube group
 function getAllCubelets() {
     const allCubelets = [];
-    scene.traverse((child) => {
+    cubeGroup.traverse((child) => {
         if (child.isMesh && child.geometry && child.geometry.type === 'BoxGeometry') {
             allCubelets.push(child);
         }
@@ -609,6 +666,35 @@ window.scrambleCube = scrambleCube;
 window.resetCube = resetCube;
 window.autoSolve = autoSolve;
 window.toggleReverse = toggleReverse;
+
+// Camera reset function
+function resetCameraView() {
+    if (camera && controls) {
+        camera.position.set(2.5, 2.5, 2.5);
+        camera.lookAt(0, 0, 0);
+        controls.target.set(0, 0, 0);
+        controls.update();
+        console.log('🔍 Camera view reset to default position');
+    }
+    
+    // Reset cube group rotation
+    if (cubeGroup) {
+        cubeGroup.rotation.set(0, 0, 0);
+        console.log('🔍 Cube group rotation reset');
+    }
+}
+
+window.resetCameraView = resetCameraView;
+
+// Reset cube rotation function
+function resetCubeRotation() {
+    if (cubeGroup) {
+        cubeGroup.rotation.set(0, 0, 0);
+        console.log('🔍 Cube rotation reset to default');
+    }
+}
+
+window.resetCubeRotation = resetCubeRotation;
 
 // Hidden history functions (for debugging/development)
 window.getRotationHistory = getRotationHistory;
