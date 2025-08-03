@@ -237,6 +237,16 @@
             box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4) !important;
         }
 
+        /* Hide the reset button in 4x4 */
+        .btn-control[onclick="resetCube()"] {
+            display: none !important;
+        }
+
+        /* Alternative: Hide by button text content */
+        .btn-control:contains("RESET") {
+            display: none !important;
+        }
+
         /* Right Panel - Cube Types + Cube Viewer */
         .right-panel {
             flex: 1;
@@ -245,7 +255,14 @@
             gap: 20px;
         }
 
-        /* Cube Types Selector - Above Cube Viewer */
+        /* Top Section Container for Cube Types and Play Games */
+        .top-section-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        /* Cube Types Selector - Smaller Size */
         .cube-types-selector {
             background: linear-gradient(135deg, 
                 rgba(30, 58, 138, 0.15), 
@@ -256,32 +273,34 @@
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.3),
                 0 0 20px rgba(59, 130, 246, 0.2) !important;
-            padding: 20px !important;
+            padding: 15px !important; /* Reduced padding */
             color: #e2e8f0 !important;
             text-align: center;
+            flex: 1; /* Take up available space */
         }
 
         .cube-types-selector h3 {
             margin-top: 0 !important;
-            margin-bottom: 15px !important;
+            margin-bottom: 12px !important; /* Reduced margin */
+            font-size: 16px !important; /* Smaller font */
         }
 
         .btn-cube-type {
             background: linear-gradient(45deg, #3b82f6, #1d4ed8) !important;
             border: 1px solid rgba(59, 130, 246, 0.3) !important;
             color: white !important;
-            padding: 8px 16px !important; /* Slightly smaller padding for 3 buttons */
-            margin: 0 3px !important; /* Reduced margin for 3 buttons */
-            border-radius: 25px !important;
+            padding: 6px 12px !important; /* Smaller padding */
+            margin: 0 2px !important; /* Reduced margin */
+            border-radius: 20px !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             font-weight: 600 !important;
             letter-spacing: 0.5px !important;
-            font-size: 13px !important; /* Slightly smaller font for 3 buttons */
+            font-size: 12px !important; /* Smaller font */
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
             cursor: pointer !important;
             font-family: 'Exo 2', sans-serif !important;
             display: inline-block !important;
-            min-width: 80px !important; /* Ensure consistent button width */
+            min-width: 70px !important; /* Smaller width */
         }
 
         .btn-cube-type:hover {
@@ -293,6 +312,53 @@
         .btn-cube-type.active {
             background: linear-gradient(45deg, #8b5cf6, #7c3aed) !important;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5) !important;
+        }
+
+        /* Play Games Section - New */
+        .play-games-selector {
+            background: linear-gradient(135deg, 
+                rgba(30, 58, 138, 0.15), 
+                rgba(59, 130, 246, 0.08)) !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            border-radius: 16px !important;
+            backdrop-filter: blur(15px) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(59, 130, 246, 0.2) !important;
+            padding: 15px !important;
+            color: #e2e8f0 !important;
+            text-align: center;
+            flex: 1; /* Take up available space */
+        }
+
+        .play-games-selector h3 {
+            margin-top: 0 !important;
+            margin-bottom: 12px !important;
+            font-size: 16px !important;
+        }
+
+        .btn-game {
+            background: linear-gradient(45deg, #10b981, #059669) !important; /* Green gradient for games */
+            border: 1px solid rgba(16, 185, 129, 0.3) !important;
+            color: white !important;
+            padding: 8px 16px !important;
+            margin: 0 2px !important;
+            border-radius: 20px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px !important;
+            font-size: 12px !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+            cursor: pointer !important;
+            font-family: 'Exo 2', sans-serif !important;
+            display: inline-block !important;
+            min-width: 80px !important;
+        }
+
+        .btn-game:hover {
+            background: linear-gradient(45deg, #059669, #047857) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
         }
 
         /* Main Cube Area - White Background */
@@ -498,9 +564,6 @@
                 <button class="btn-control" onclick="scrambleCube()">
                     SCRAMBLE
                 </button>
-                <button class="btn-control" onclick="resetCube()">
-                    RESET
-                </button>
                 <button class="btn-control" onclick="autoSolve()">
                     AUTO-SOLVE
                 </button>
@@ -509,12 +572,20 @@
 
         <!-- Right Panel: Cube Types + Cube Viewer -->
         <div class="right-panel">
-            <!-- Cube Types Selector - Above Cube Viewer -->
-            <div class="cube-types-selector">
-                <h3>Cube Types:</h3>
-                <button class="btn-cube-type" onclick="window.location.href='index.html'">2x2 CUBE</button>
-                <button class="btn-cube-type active" onclick="window.location.href='4x4.html'">4x4 CUBE</button>
-                <button class="btn-cube-type" onclick="window.open('https://rubiks-new-five.vercel.app/', '_blank')">3x3 CUBE</button>
+            <!-- Top Section: Cube Types + Play Games -->
+            <div class="top-section-container">
+                <!-- Cube Types Selector - Smaller Size -->
+                <div class="cube-types-selector">
+                    <h3>Cube Types:</h3>
+                    <button class="btn-cube-type" onclick="window.location.href='index.html'">2x2 CUBE</button>
+                    <button class="btn-cube-type active" onclick="window.location.href='4x4.html'">4x4 CUBE</button>
+                </div>
+
+                <!-- Play Games Section - New -->
+                <div class="play-games-selector">
+                    <h3>Play Games:</h3>
+                    <button class="btn-game" onclick="window.open('https://rubiks-new-five.vercel.app/', '_blank')">3x3 CUBE</button>
+                </div>
             </div>
 
             <!-- Main Cube Area - White Background -->

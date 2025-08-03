@@ -200,15 +200,8 @@ function createCubelet(x, y, z) {
     
     const cubelet = new THREE.Mesh(geometry, materials);
     
-    // ✅ Store original position and create deep copies of materials
-    cubelet.userData = { 
-        originalPosition: { x, y, z },
-        originalMaterials: materials.map(mat => new THREE.MeshBasicMaterial({
-            color: mat.color.getHex(),
-            transparent: mat.transparent,
-            opacity: mat.opacity
-        }))
-    };
+    // ✅ Store only original position (exactly like 2x2)
+    cubelet.userData = { originalPosition: { x, y, z } };
     
     // Add black edges to make the cube structure more visible
     const edges = new THREE.EdgesGeometry(geometry);
@@ -427,95 +420,43 @@ function isKeyPressAllowed() {
     return true;
 }
 
-// ✅ Fixed resetCubeObject function for 4x4 cube
+// ✅ Reset function that works exactly like 2x2 cube
 function resetCubeObject() {
-    console.log('🔄 Resetting 4x4 cube to solved state...');
+    console.log('🔄 Instantly resetting 4x4 cube to solved state (like 2x2)...');
     
     // Stop auto-solve if it's running
     if (autoSolveMode) {
         stopAutoSolve();
     }
     
-    // Stop any ongoing animations
-    isAnimating = false;
-    
-    // Clear any temporary rotation groups
-    if (currentRotationGroup) {
-        scene.remove(currentRotationGroup);
-        currentRotationGroup = null;
-    }
-    
-    // ✅ Properly reset all cubelets to original positions
+    // Reset all cubelets to original positions (exactly like 2x2)
     const positions = [-1.5, -0.5, 0.5, 1.5]; // 4x4 positions
-    
     for (let x of positions) {
         for (let y of positions) {
             for (let z of positions) {
-                const xIdx = xIndex(x);
-                const yIdx = yIndex(y);
-                const zIdx = zIndex(z);
-                
-                // Skip center pieces (they don't exist in 4x4)
-                if (x === 0 && y === 0 && z === 0) continue;
-                
-                const cubelet = cubesArray3D[xIdx][yIdx][zIdx];
+                const cubelet = cubesArray3D[xIndex(x)][yIndex(y)][zIndex(z)];
                 if (cubelet) {
-                    // Reset position to original
-                    cubelet.position.set(x, y, z);
+                    const originalPos = cubelet.userData.originalPosition;
+                    cubelet.position.set(originalPos.x, originalPos.y, originalPos.z);
                     cubelet.rotation.set(0, 0, 0);
-                    
-                    // ✅ Properly restore original materials
-                    if (cubelet.userData.originalMaterials) {
-                        // Create fresh material clones to avoid reference issues
-                        const newMaterials = cubelet.userData.originalMaterials.map(mat => {
-                            return new THREE.MeshBasicMaterial({
-                                color: mat.color.getHex(),
-                                transparent: mat.transparent,
-                                opacity: mat.opacity
-                            });
-                        });
-                        cubelet.material = newMaterials;
-                    }
-                    
-                    // Ensure cubelet is attached to main cube group
-                    if (cubelet.parent !== cubeGroup) {
-                        cubeGroup.add(cubelet);
-                    }
-                    
-                    console.log(`🔄 Reset cubelet at (${x}, ${y}, ${z}) to original position`);
-                } else {
-                    console.warn(`🔄 No cubelet found at position (${x}, ${y}, ${z})`);
                 }
             }
         }
     }
     
-    // Reset cube group rotation
+    // Reset cube group rotation (exactly like 2x2)
     if (cubeGroup) {
         cubeGroup.rotation.set(0, 0, 0);
-        console.log('🔄 Cube group rotation reset');
     }
     
-    // Reset move count
+    // Reset move count (exactly like 2x2)
     moveCount = 0;
     updateMoveCounter();
     
-    // Clear all history and internal variables
+    // Clear move history but keep rotation history for analysis (exactly like 2x2)
     moveHistory = [];
-    rotationHistory = [];
-    scrambleHistory = [];
-    
-    // Reset internal state variables
-    reverseMode = false;
-    autoSolveMode = false;
-    
-    // ✅ Force a scene update to ensure all changes are rendered
-    if (renderer) {
-        renderer.render(scene, camera);
-    }
-    
-    console.log('🔄 4x4 cube reset to solved state');
-    console.log('🔍 Hidden History: All history cleared');
+    console.log('4x4 cube reset to solved state');
+    console.log('🔍 Hidden History: Move history cleared, rotation history preserved');
 }
 
 // Export resetCube function to match HTML onclick
