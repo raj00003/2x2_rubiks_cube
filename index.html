@@ -296,16 +296,18 @@
             background: linear-gradient(45deg, #3b82f6, #1d4ed8) !important;
             border: 1px solid rgba(59, 130, 246, 0.3) !important;
             color: white !important;
-            padding: 10px 20px !important;
-            margin: 0 5px !important;
+            padding: 8px 16px !important; /* Slightly smaller padding for 3 buttons */
+            margin: 0 3px !important; /* Reduced margin for 3 buttons */
             border-radius: 25px !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             font-weight: 600 !important;
             letter-spacing: 0.5px !important;
-            font-size: 14px !important;
+            font-size: 13px !important; /* Slightly smaller font for 3 buttons */
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
             cursor: pointer !important;
             font-family: 'Exo 2', sans-serif !important;
+            display: inline-block !important;
+            min-width: 80px !important; /* Ensure consistent button width */
         }
 
         .btn-cube-type:hover {
@@ -541,6 +543,7 @@
                 <h3>Cube Types:</h3>
                 <button class="btn-cube-type active" onclick="window.location.href='index.html'">2x2 CUBE</button>
                 <button class="btn-cube-type" onclick="window.location.href='4x4.html'">4x4 CUBE</button>
+                <button class="btn-cube-type" onclick="window.open('https://rubiks-new-five.vercel.app/', '_blank')">3x3 CUBE</button>
             </div>
 
             <!-- Main Cube Area - Increased Size -->
