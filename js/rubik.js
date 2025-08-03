@@ -20,15 +20,15 @@ let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 let cubeGroup; // Master group containing all cubelets
 
-// Cube colors
+// ✅ Enhanced Cube colors - Darker and brighter for better visibility against space background
 const COLORS = {
-    WHITE: 0xFFFFFF,
-    YELLOW: 0xFFFF00,
-    RED: 0xFF0000,
-    ORANGE: 0xFF8C00,
-    BLUE: 0x0000FF,
-    GREEN: 0x00FF00,
-    BLACK: 0x000000
+    WHITE: 0xFFFFFF,      // Pure white - already bright
+    YELLOW: 0xFFD700,     // Golden yellow - brighter than 0xFFFF00
+    RED: 0xDC143C,        // Crimson red - darker and more vibrant
+    ORANGE: 0xFF4500,     // Orange red - brighter and more vibrant
+    BLUE: 0x0066CC,       // Deep blue - darker and more visible
+    GREEN: 0x32CD32,      // Lime green - brighter and more vibrant
+    BLACK: 0x000000       // Pure black - unchanged
 };
 
 // Initialize the scene
@@ -43,8 +43,12 @@ function initScene() {
     console.log('Three.js loaded successfully');
     
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf8f9fa);
-    console.log('Scene created');
+    
+    // ✅ Create space-like background for 2x2
+    // Deep space gradient background
+    const spaceGradient = new THREE.Color(0x0a0e27); // Deep space blue
+    scene.background = spaceGradient;
+    console.log('Scene created with space background');
     
     // Camera setup - positioned properly for 2x2 cube
     const container = document.getElementById('cube-container');
@@ -59,10 +63,12 @@ function initScene() {
     camera.lookAt(0, 0, 0); // Look at the center of the cube
     console.log('Camera created at position:', camera.position);
     
-    // Renderer setup
+    // Renderer setup with space background
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0xf8f9fa, 1);
+    renderer.setClearColor(0x0a0e27, 1); // Deep space blue
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
     console.log('Renderer created and added to container');
     console.log('Container dimensions:', container.clientWidth, 'x', container.clientHeight);
@@ -81,30 +87,39 @@ function initScene() {
         controls.enableKeys = false; // disable keyboard controls
         controls.target.set(0, 0, 0); // ensure target is at cube center
         
-        // Add event listeners for debugging
-        controls.addEventListener('start', () => console.log('🔍 OrbitControls: Mouse interaction started'));
-        controls.addEventListener('end', () => console.log('🔍 OrbitControls: Mouse interaction ended'));
-        controls.addEventListener('change', () => console.log('🔍 OrbitControls: Camera position changed'));
-        
         console.log('OrbitControls created with enhanced settings');
-        console.log('🔍 Controls object:', controls);
-        console.log('🔍 Camera position:', camera.position);
-        console.log('🔍 Renderer DOM element:', renderer.domElement);
-        console.log('🔍 Controls target:', controls.target);
     } else {
         console.warn('OrbitControls not available');
         controls = null;
     }
     
-    // Lighting - optimized for 2x2 cube visibility
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // ✅ Enhanced space lighting for better color visibility
+    // Ambient light for overall space illumination - increased intensity
+    const ambientLight = new THREE.AmbientLight(0x2d3a5f, 0.6); // Brighter blue ambient
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    // Main directional light (like a distant star) - increased intensity
+    const directionalLight = new THREE.DirectionalLight(0x60a5fa, 1.0); // Brighter blue-white star light
     directionalLight.position.set(3, 3, 3);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
     scene.add(directionalLight);
     
-    console.log('Lighting added - ambient and directional lights');
+    // Secondary directional light for depth - increased intensity
+    const directionalLight2 = new THREE.DirectionalLight(0x4a90e2, 0.5); // Brighter deep blue secondary
+    directionalLight2.position.set(-2, -2, -2);
+    scene.add(directionalLight2);
+    
+    // ✅ Additional fill light for better color visibility
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.3); // White fill light
+    fillLight.position.set(0, 5, 0);
+    scene.add(fillLight);
+    
+    console.log('Enhanced space lighting added for better color visibility');
+    
+    // ✅ Add space particles/stars for 2x2
+    createSpaceParticles();
     
     // Create the master cube group
     cubeGroup = new THREE.Group();
@@ -129,13 +144,13 @@ function initScene() {
     
     // Start render loop
     animate();
-    console.log('Animation loop started');
+    console.log('Animation loop started with enhanced space theme');
 }
 
 // Create 2x2 cube (8 cubelets)
 function createCube() {
     console.log('Creating 2x2 cube...');
-    // Use minimal spacing for tight 2x2x2 block
+    // Use minimal spacing for tight 2x2 block
     const pos = [-0.6, 0.6];
     let cubeletCount = 0;
     
@@ -164,7 +179,7 @@ function createCube() {
             }
         }
     }
-    console.log(`Created ${cubeletCount} cubelets in a tight 2x2x2 configuration`);
+    console.log(`Created ${cubeletCount} cubelets in a tight 2x2 configuration`);
 }
 
 // Create individual cubelet
@@ -251,13 +266,63 @@ function setupMouseDragEvents() {
     canvas.style.cursor = 'grab';
 }
 
-// Animation loop
+// ✅ Create space particles/stars for 2x2
+function createSpaceParticles() {
+    const particleCount = 300; // Fewer particles for 2x2 (smaller scene)
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    
+    for (let i = 0; i < particleCount; i++) {
+        // Random positions in a smaller sphere (appropriate for 2x2)
+        const radius = 10 + Math.random() * 20;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+        
+        positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = radius * Math.cos(phi);
+        
+        // Random star colors (white, blue, yellow)
+        const starTypes = [0xffffff, 0x4a90e2, 0xffd700];
+        const starColor = starTypes[Math.floor(Math.random() * starTypes.length)];
+        
+        colors[i * 3] = (starColor >> 16) / 255;
+        colors[i * 3 + 1] = ((starColor >> 8) & 255) / 255;
+        colors[i * 3 + 2] = (starColor & 255) / 255;
+    }
+    
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    const particleMaterial = new THREE.PointsMaterial({
+        size: 0.08, // Slightly smaller particles for 2x2
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8
+    });
+    
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+    
+    // Store for animation
+    window.spaceParticles = particleSystem;
+    console.log('Space particles created for 2x2');
+}
+
+// ✅ Enhanced animate function with space effects for 2x2
 function animate() {
     requestAnimationFrame(animate);
     
-    if (controls) {
-        controls.update(); // required for damping
+    // Animate space particles
+    if (window.spaceParticles) {
+        window.spaceParticles.rotation.y += 0.0003; // Slower rotation for 2x2
     }
+    
+    if (controls) {
+        controls.update();
+    }
+    
     renderer.render(scene, camera);
     
     // Debug: Log render status every 5 seconds
@@ -336,6 +401,10 @@ function resetCubeObject() {
             }
         }
     }
+    
+    // Reset cube group rotation
+    cubeGroup.rotation.set(0, 0, 0);
+    
     moveCount = 0;
     updateMoveCounter();
     
@@ -367,12 +436,10 @@ function scrambleCube() {
 }
 
 function updateMoveCounter() {
-    document.getElementById('move-counter').textContent = moveCount;
-}
-
-function updateModeDisplays() {
-    document.getElementById('reverse-mode').textContent = `Reverse: ${reverseMode ? 'ON' : 'OFF'}`;
-    document.getElementById('auto-solve-mode').textContent = `Auto-Solve: ${autoSolveMode ? 'ON' : 'OFF'}`;
+    const moveCounterElement = document.getElementById('move-counter');
+    if (moveCounterElement) {
+        moveCounterElement.textContent = moveCount;
+    }
 }
 
 // Hidden rotation history management
@@ -440,9 +507,21 @@ function exportHistoryData() {
 // Export functions for other modules
 export function executeMove(move, direction, source = 'user') {
     console.log(`🔍 DEBUG: executeMove called with move: ${move}, direction: ${direction}, source: ${source}`);
+    
     if (face_animation_status[move]) {
         console.log(`🔍 DEBUG: Face ${move} is already animating, skipping`);
         return;
+    }
+    
+    // Add to rotation history (except for auto-solve moves to avoid double counting)
+    if (source !== 'auto-solve') {
+        addToRotationHistory(move, direction, source);
+    }
+    
+    // Increment move count for user moves only
+    if (source === 'user') {
+        moveCount++;
+        updateMoveCounter();
     }
     
     // Map move to face and call realistic 2x2 rotation
@@ -460,12 +539,6 @@ export function executeMove(move, direction, source = 'user') {
     
     // Add to move history for undo functionality
     moveHistory.push({ move, direction, timestamp: Date.now() });
-    
-    // Add to hidden rotation history
-    addToRotationHistory(move, direction, source);
-    
-    moveCount++;
-    updateMoveCounter();
 }
 
 // EPS to handle float precision
@@ -592,30 +665,37 @@ export function rotate2x2Face(face, direction) {
 
 export function toggleReverse() {
     reverseMode = !reverseMode;
-    updateModeDisplays();
+    console.log(`Reverse mode: ${reverseMode ? 'ON' : 'OFF'}`);
 }
 
+// Completely remove the problematic updateModeDisplays function
+// Replace with a safe version that does nothing
+function updateModeDisplays() {
+    // Safe function that does nothing - prevents all errors
+    return;
+}
+
+// Fixed Auto-Solve Function - Uses rotation history to solve the cube
 export function autoSolve() {
+    console.log('🔍 Auto-solve function called');
+    
+    // Check if already solving
     if (autoSolveMode) {
-        // If already in auto-solve mode, stop it
+        console.log('🔍 Auto-solve already in progress, stopping...');
         autoSolveMode = false;
-        updateModeDisplays();
-        console.log('🔍 Auto-solve mode disabled');
         return;
     }
     
     // Start auto-solve process
     autoSolveMode = true;
-    updateModeDisplays();
     console.log('🔍 Auto-solve mode enabled - starting solve sequence');
     
-    // Get the current rotation history to reverse
+    // Get the current rotation history to reverse (this is what stores all moves)
     const currentHistory = [...rotationHistory];
     
     if (currentHistory.length === 0) {
         console.log('🔍 No moves to reverse - cube is already solved');
         autoSolveMode = false;
-        updateModeDisplays();
         return;
     }
     
@@ -623,10 +703,11 @@ export function autoSolve() {
     const reversedMoves = currentHistory.reverse();
     
     console.log(`🔍 Auto-solve: Reversing ${reversedMoves.length} moves`);
+    console.log('🔍 Reversed moves:', reversedMoves.map(m => `${m.move}${m.direction}`).join(', '));
     
     // Execute reversed moves with delay
     reversedMoves.forEach((moveEntry, index) => {
-        const delay = index * 600; // 600ms between moves
+        const delay = index * 800; // 800ms between moves for better visibility
         
         setTimeout(() => {
             if (!autoSolveMode) {
@@ -639,13 +720,13 @@ export function autoSolve() {
             
             console.log(`🔍 Auto-solve: Move ${index + 1}/${reversedMoves.length} - ${moveEntry.move}${reversedDirection} (reversing ${moveEntry.move}${moveEntry.direction})`);
             
+            // Execute the move directly without adding to history
             executeMove(moveEntry.move, reversedDirection, 'auto-solve');
             
             // Check if this is the last move
             if (index === reversedMoves.length - 1) {
                 setTimeout(() => {
                     autoSolveMode = false;
-                    updateModeDisplays();
                     console.log('🔍 Auto-solve completed - cube should be solved');
                     
                     // Clear the rotation history after successful solve
@@ -696,17 +777,10 @@ function resetCubeRotation() {
 
 window.resetCubeRotation = resetCubeRotation;
 
-// Hidden history functions (for debugging/development)
-window.getRotationHistory = getRotationHistory;
-window.getHistoryStats = getHistoryStats;
-window.clearRotationHistory = clearRotationHistory;
-window.exportHistoryData = exportHistoryData;
-
-// Auto-solve control function
+// Auto-solve control function - No mode display references
 function stopAutoSolve() {
     if (autoSolveMode) {
         autoSolveMode = false;
-        updateModeDisplays();
         console.log('🔍 Auto-solve stopped by user');
     }
 }

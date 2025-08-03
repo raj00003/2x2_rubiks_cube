@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CubeNav: Mission Aerospace</title>
+    <title>4x4 Rubik's Cube - CubeNav: Mission Aerospace</title>
     
     <!-- Import modern fonts for aerospace feel -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -105,27 +105,26 @@
             font-weight: 600 !important;
             font-size: 16px !important;
             margin-bottom: 12px !important;
-            letter-spacing: 0.5px !important;
-            color: #60a5fa !important;
+            letter-spacing: 0.3px !important;
         }
 
         /* Main Container Layout */
         .container-fluid {
-            position: relative;
-            z-index: 10;
-            padding: 20px;
-            display: flex;
-            min-height: 100vh;
+            display: flex !important;
+            min-height: 100vh !important;
+            padding: 20px !important;
+            gap: 20px !important;
+            position: relative !important;
+            z-index: 10 !important;
         }
 
         /* Left Sidebar - How to Play + Controls */
         .left-sidebar {
-            width: 320px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-right: 20px;
+            width: 320px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 20px !important;
+            margin-right: 20px !important;
         }
 
         /* How to Play Section - Compact 2-Column */
@@ -139,7 +138,7 @@
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.3),
                 0 0 20px rgba(59, 130, 246, 0.2) !important;
-            padding: 25px !important;
+            padding: 20px !important;
             color: #e2e8f0 !important;
         }
 
@@ -147,43 +146,46 @@
             margin-top: 0 !important;
             margin-bottom: 20px !important;
             text-align: center !important;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
         }
 
         .controls-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            font-size: 14px;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px 15px !important;
+            font-size: 14px !important;
         }
 
         .control-item {
-            display: flex;
-            align-items: center;
-            padding: 6px 0;
-            transition: all 0.3s ease;
-            color: #cbd5e1 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 4px 0 !important;
+            transition: all 0.2s ease !important;
         }
 
         .control-item:hover {
             color: #60a5fa !important;
-            transform: translateX(5px);
+            transform: translateX(3px) !important;
         }
 
         .key {
             background: linear-gradient(45deg, #3b82f6, #1d4ed8) !important;
             color: white !important;
             padding: 4px 8px !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
+            border-radius: 6px !important;
             font-size: 12px !important;
-            margin-right: 8px !important;
+            font-weight: 600 !important;
             min-width: 35px !important;
             text-align: center !important;
-            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3) !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
             font-family: 'Orbitron', monospace !important;
         }
 
-        /* Control Buttons Section - Light Blue Theme */
+        /* Control Buttons Section */
         .control-buttons {
             background: linear-gradient(135deg, 
                 rgba(30, 58, 138, 0.15), 
@@ -194,7 +196,7 @@
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.3),
                 0 0 20px rgba(59, 130, 246, 0.2) !important;
-            padding: 25px !important;
+            padding: 20px !important;
             color: #e2e8f0 !important;
         }
 
@@ -235,34 +237,6 @@
             box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4) !important;
         }
 
-        /* Move Counter Section */
-        .move-counter-section {
-            background: linear-gradient(135deg, 
-                rgba(30, 58, 138, 0.15), 
-                rgba(59, 130, 246, 0.08)) !important;
-            border: 1px solid rgba(59, 130, 246, 0.3) !important;
-            border-radius: 16px !important;
-            backdrop-filter: blur(15px) !important;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(59, 130, 246, 0.2) !important;
-            padding: 20px !important;
-            color: #e2e8f0 !important;
-        }
-
-        .move-counter {
-            font-size: 2em !important;
-            font-weight: 700 !important;
-            color: #60a5fa !important;
-            text-align: center !important;
-            text-shadow: 0 0 15px rgba(96, 165, 250, 0.7) !important;
-            padding: 15px !important;
-            background: rgba(96, 165, 250, 0.1) !important;
-            border-radius: 12px !important;
-            border: 2px solid rgba(96, 165, 250, 0.3) !important;
-            font-family: 'Orbitron', monospace !important;
-        }
-
         /* Right Panel - Cube Types + Cube Viewer */
         .right-panel {
             flex: 1;
@@ -299,53 +273,50 @@
             padding: 10px 20px !important;
             margin: 0 5px !important;
             border-radius: 25px !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transition: all 0.3s ease !important;
             font-weight: 600 !important;
-            letter-spacing: 0.5px !important;
-            font-size: 14px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
             cursor: pointer !important;
             font-family: 'Exo 2', sans-serif !important;
         }
 
         .btn-cube-type:hover {
-            background: linear-gradient(45deg, #1d4ed8, #1e40af) !important;
+            background: linear-gradient(45deg, #1d4ed8, #3b82f6) !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4) !important;
         }
 
         .btn-cube-type.active {
-            background: linear-gradient(45deg, #8b5cf6, #7c3aed) !important;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5) !important;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6) !important;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.5) !important;
         }
 
-        /* Main Cube Container - Increased by 1.5x */
+        /* Main Cube Area - White Background */
         #cube-container {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05) !important;
-            backdrop-filter: blur(15px) !important;
+            background-color: #f8f8f8 !important;
             border-radius: 20px !important;
-            border: 1px solid rgba(59, 130, 246, 0.3) !important;
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                inset 0 0 20px rgba(59, 130, 246, 0.1) !important;
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(59, 130, 246, 0.2) !important;
+            padding: 20px !important;
+            min-height: 500px !important;
+            max-height: 500px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             position: relative !important;
-            overflow: hidden !important;
-            min-height: 525px !important; /* Increased from 350px by 1.5x */
-            max-height: 525px !important; /* Increased from 350px by 1.5x */
         }
 
         #cube-container canvas {
             width: 100% !important;
             height: 100% !important;
-            display: block !important;
-            border-radius: 20px !important;
+            border-radius: 15px !important;
             cursor: grab !important;
             touch-action: none !important;
             pointer-events: auto !important;
             user-select: none !important;
-            position: relative !important;
-            z-index: 10 !important;
         }
 
         #cube-container canvas:active {
@@ -398,20 +369,6 @@
                 background-position: 100% 50%;
                 filter: brightness(1.3);
             }
-        }
-
-        /* Aerospace loading animation */
-        @keyframes aerospace-pulse {
-            0%, 100% { 
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.2) !important;
-            }
-            50% { 
-                box-shadow: 0 0 30px rgba(59, 130, 246, 0.4) !important;
-            }
-        }
-
-        .loading {
-            animation: aerospace-pulse 2s ease-in-out infinite !important;
         }
 
         /* Responsive design for aerospace theme */
@@ -494,6 +451,25 @@
                         <span class="key">B</span> - Rotate Back face
                     </div>
                     <div class="control-item">
+                        <span class="key">r</span> - Inner Right
+                    </div>
+                    <div class="control-item">
+                        <span class="key">l</span> - Inner Left
+                    </div>
+                    <div class="control-item">
+                        <span class="key">u</span> - Inner Up
+                    </div>
+                    <div class="control-item">
+                        <span class="key">d</span> - Inner Down
+                    </div>
+                    <div class="control-item">
+                        <span class="key">f</span> - Inner Front
+                    </div>
+                    <div class="control-item">
+                        <span class="key">b</span> - Inner Back
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="control-item">
                         <span class="key">1</span> - Normal direction
                     </div>
                     <div class="control-item">
@@ -527,11 +503,6 @@
                     AUTO-SOLVE
                 </button>
             </div>
-
-            <!-- Move Counter -->
-            <div class="move-counter-section">
-                <div class="move-counter" id="move-counter">0</div>
-            </div>
         </div>
 
         <!-- Right Panel: Cube Types + Cube Viewer -->
@@ -539,11 +510,11 @@
             <!-- Cube Types Selector - Above Cube Viewer -->
             <div class="cube-types-selector">
                 <h3>Cube Types:</h3>
-                <button class="btn-cube-type active" onclick="window.location.href='index.html'">2x2 CUBE</button>
-                <button class="btn-cube-type" onclick="window.location.href='4x4.html'">4x4 CUBE</button>
+                <button class="btn-cube-type" onclick="window.location.href='index.html'">2x2 CUBE</button>
+                <button class="btn-cube-type active" onclick="window.location.href='4x4.html'">4x4 CUBE</button>
             </div>
 
-            <!-- Main Cube Area - Increased Size -->
+            <!-- Main Cube Area - White Background -->
             <div id="cube-container"></div>
             
             <!-- Stylish Title -->
@@ -555,6 +526,6 @@
 
     <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-    <script type="module" src="js/rubik.js"></script>
+    <script type="module" src="js/4x4-rubik.js"></script>
 </body>
 </html> 
